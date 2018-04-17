@@ -1,6 +1,6 @@
 # goddi - Go dump domain info
 [![licence badge]][licence]
-[![Go Report Card](https://goreportcard.com/badge/github.com/NetSPI/goddi)](https://goreportcard.com/report/github.com/NetSPI/goddi)
+[![Go Report Card](https://goreportcard.com/badge/github.com/NetSPI/goddi?style=flat-square)](https://goreportcard.com/report/github.com/NetSPI/goddi)
 
 [licence badge]:https://img.shields.io/badge/license-New%20BSD-blue.svg?style=flat-square
 [licence]:https://github.com/NetSPI/goddi/blob/master/LICENSE
