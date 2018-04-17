@@ -1,6 +1,6 @@
 # goddi - Go dump domain info
 [![licence badge]][licence]
-![GitHub release](https://img.shields.io/github/release/NetSPI/goddi.svg?style=flat-square)
+[![Go Report Card](https://goreportcard.com/badge/github.com/NetSPI/goddi)](https://goreportcard.com/report/github.com/NetSPI/goddi)
 
 [licence badge]:https://img.shields.io/badge/license-New%20BSD-blue.svg?style=flat-square
 [licence]:https://github.com/NetSPI/goddi/blob/master/LICENSE
@@ -17,7 +17,7 @@ Use the executables in the releases section. If you want to build it yourself, m
 Tested on Windows 10 and 8.1 (go1.10 windows/amd64).
 
 ### Linux
-Tested on Kali Linux (go1.10 linux/amd64). Use linux setup shell script.
+Tested on Kali Linux (go1.10 linux/amd64).
 
 - umount, mount, and cifs-utils need to be installed for mapping a share for GetGPP
 ```
