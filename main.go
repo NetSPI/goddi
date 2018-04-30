@@ -13,10 +13,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/NetSPI/goddi"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/NetSPI/goddi/ddi"
 )
 
 func main() {

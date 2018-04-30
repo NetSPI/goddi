@@ -18,8 +18,8 @@ import (
 	"time"
 )
 
-// WINDOWS_EPOCH_FILETIME January 1, 1601 UTC (coordinate universal time)
-const WINDOWS_EPOCH_FILETIME int64 = 116444736000000000
+// WindowsEpochFiletime January 1, 1601 UTC (coordinate universal time)
+const WindowsEpochFiletime int64 = 116444736000000000
 
 // Writing output to csv
 // Reference: https://golangcode.com/write-data-to-a-csv-file/
@@ -149,7 +149,7 @@ func getWinFiletime(numdays int) string {
 
 	win := time.Now().UTC().UnixNano()
 	win /= 100
-	win += WINDOWS_EPOCH_FILETIME
+	win += WindowsEpochFiletime
 
 	nanosago := 10000000 * 60 * 60 * 24 * int64(numdays)
 	nanosago /= 100

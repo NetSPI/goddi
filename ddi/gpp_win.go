@@ -4,10 +4,11 @@ package goddi
 
 import (
 	"fmt"
-	"gopkg.in/ldap.v2"
 	"log"
 	"os"
 	"os/exec"
+
+	"gopkg.in/ldap.v2"
 )
 
 // GetGPP grabs all GPP passwords
