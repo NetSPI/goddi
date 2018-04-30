@@ -28,6 +28,12 @@ apt-get install -y mount cifs-utils
 - make sure nothing is mounted at /mnt/goddi/
 - make sure to run with `sudo`
 
+### Darwin
+Tested on Darwin 17.5.0 (go1.10.1 darwin/amd64)
+
+- make sure nothing is mounted at /mnt/goddi/
+- make sure to run with `sudo`
+
 ## Run
 When run, will default to using TLS (tls.Client method) over 636. On Linux, make sure to run with `sudo`.
 
