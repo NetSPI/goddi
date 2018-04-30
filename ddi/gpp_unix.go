@@ -47,9 +47,9 @@ func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string)
 	existMount(mntpoint)
 	checkMount(mntpoint)
 
-	_, errr := mountUnix(`//`+dc+`/sysvol/`, mntpoint, user, pass)
-	if errr != nil {
-		log.Fatal(errr)
+	_, err := mountUnix(`//`+dc+`/sysvol/`, mntpoint, user, pass)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	list := getSubDirs(mntpoint)
