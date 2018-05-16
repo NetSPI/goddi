@@ -101,7 +101,7 @@ func existMount(mntpoint string) {
 	// if /mnt/goddi does not exist, mkdir the directory
 	if _, err := os.Stat(mntpoint); os.IsNotExist(err) {
 		os.Mkdir(mntpoint, os.ModePerm)
-		fmt.Println("mount point created")
+		fmt.Println("[i] /mnt/goddi mount point created...\n")
 	}
 }
 
