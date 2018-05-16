@@ -7,8 +7,9 @@ package goddi
 
 import (
 	"fmt"
-	"gopkg.in/ldap.v2"
 	"log"
+
+	"gopkg.in/ldap.v2"
 )
 
 // GetUsers all domain users and checks for sensitive data in Description

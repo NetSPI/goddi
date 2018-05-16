@@ -4,10 +4,12 @@ package goddi
 
 import (
 	"fmt"
-	"gopkg.in/ldap.v2"
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
+
+	"gopkg.in/ldap.v2"
 )
 
 // GetGPP grabs all GPP passwords
@@ -46,9 +48,21 @@ func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string)
 	existMount(mntpoint)
 	checkMount(mntpoint)
 
-	_, errr := mountUnix(`//`+dc+`/sysvol/`, mntpoint, user, pass)
-	if errr != nil {
-		log.Fatal(errr)
+	var fsType, mntopt, address string
+	switch os := runtime.GOOS; os {
+	case "darwin":
+		fsType = "smbfs"
+		address = fmt.Sprintf(`//%s;%s:%s@%s/sysvol/`, baseDN, user, pass, dc)
+	default:
+		fsType = "cifs"
+		address = fmt.Sprintf(`//%s/sysvol/`, dc)
+		mntopt = fmt.Sprintf(`user=%s,password=%s,vers=3.0`, user, pass)
+	}
+
+	_, err := mountCmd(fsType, mntopt, address, mntpoint)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	list := getSubDirs(mntpoint)
@@ -103,9 +117,9 @@ func checkMount(mntpoint string) {
 	}
 }
 
-// Map a unix share
-func mountUnix(address string, mntpoint string, user string, pw string) ([]byte, error) {
-	return exec.Command("mount", "-t", "cifs", address, mntpoint, "-o", fmt.Sprintf(`user=%s,password=%s,vers=3.0`, user, pw)).CombinedOutput()
+// mountCmd maps a unix/darwin share
+func mountCmd(fsType, option, address, mntpoint string) ([]byte, error) {
+	return exec.Command("mount", "-t", fsType, "-o", option, address, mntpoint).CombinedOutput()
 }
 
 // Remove a unix share

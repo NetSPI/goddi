@@ -5,8 +5,9 @@ package goddi
 import (
 	"crypto/tls"
 	"fmt"
-	"gopkg.in/ldap.v2"
 	"log"
+
+	"gopkg.in/ldap.v2"
 )
 
 // LdapInfo contains connection info

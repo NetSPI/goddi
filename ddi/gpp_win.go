@@ -4,10 +4,11 @@ package goddi
 
 import (
 	"fmt"
-	"gopkg.in/ldap.v2"
 	"log"
 	"os"
 	"os/exec"
+
+	"gopkg.in/ldap.v2"
 )
 
 // GetGPP grabs all GPP passwords
@@ -46,9 +47,9 @@ func GetGPP(conn *ldap.Conn, domain string, dc string, user string, pass string)
 
 	letter, drive = existsDrive(letter, drive)
 
-	_, errr := mapDrive(letter, `\\`+dc+`\SYSVOL`, domain, user, pass)
-	if errr != nil {
-		log.Fatal(errr)
+	_, err := mapDrive(letter, `\\`+dc+`\SYSVOL`, domain, user, pass)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	list := getSubDirs(drive)
