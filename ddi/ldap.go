@@ -7,9 +7,9 @@ package goddi
 
 import (
 	"fmt"
-	"log"
-
 	"gopkg.in/ldap.v2"
+	"log"
+	"strings"
 )
 
 // GetUsers all domain users and checks for sensitive data in Description
@@ -54,7 +54,7 @@ func GetUsers(conn *ldap.Conn, baseDN string) {
 		desc := entry.GetAttributeValue("description")
 		adm := entry.GetAttributeValue("adminCount")
 		homedir := entry.GetAttributeValue("homeDirectory")
-		mem := entry.GetAttributeValue("memberOf")
+		mem := strings.Join(entry.GetAttributeValues("memberOf"), " ")
 		data := []string{
 			sam,
 			samtype,
@@ -588,8 +588,8 @@ func GetLAPS(conn *ldap.Conn, baseDN string) {
 
 	attributes := []string{
 		"dNSHostName",
-		"ms-MCS-AdmPwd",
-		"ms-mcs-AdmPwdExpirationTime"}
+		"ms-Mcs-AdmPwd",
+		"ms-Mcs-AdmPwdExpirationTime"}
 	filter := "(&(objectCategory=Computer))"
 	csv := [][]string{}
 	csv = append(csv, attributes)
@@ -597,11 +597,11 @@ func GetLAPS(conn *ldap.Conn, baseDN string) {
 	sr := ldapSearch(baseDN, filter, attributes, conn)
 
 	for _, entry := range sr.Entries {
-		if len(entry.GetAttributeValue("ms-MCS-AdmPwd")) > 0 {
+		if len(entry.GetAttributeValue("ms-Mcs-AdmPwd")) > 0 {
 			data := []string{
 				entry.GetAttributeValue("dNSHostName"),
-				entry.GetAttributeValue("ms-MCS-AdmPwd"),
-				entry.GetAttributeValue("ms-mcs-AdmPwdExpirationTime")}
+				entry.GetAttributeValue("ms-Mcs-AdmPwd"),
+				entry.GetAttributeValue("ms-Mcs-AdmPwdExpirationTime")}
 			csv = append(csv, data)
 		}
 	}
