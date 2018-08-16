@@ -730,7 +730,7 @@ func ldapSearch(searchDN string, filter string, attributes []string, conn *ldap.
 
 	sr, err := conn.SearchWithPaging(searchRequest, 200)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	return sr
