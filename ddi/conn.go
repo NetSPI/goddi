@@ -12,17 +12,18 @@ import (
 
 // LdapInfo contains connection info
 type LdapInfo struct {
-	LdapServer  string
-	LdapIP      string
-	LdapPort    uint16
-	LdapTLSPort uint16
-	User        string
-	Usergpp     string
-	Pass        string
-	Domain      string
-	Conn        *ldap.Conn
-	Unsafe      bool
-	StartTLS    bool
+	LdapServer       string
+	LdapIP           string
+	LdapPort         uint16
+	LdapTLSPort      uint16
+	User             string
+	Usergpp          string
+	Pass             string
+	Domain           string
+	Conn             *ldap.Conn
+	Unsafe           bool
+	StartTLS         bool
+	ForceInsecureTLS bool
 }
 
 func dial(li *LdapInfo) {
@@ -48,7 +49,7 @@ func dial(li *LdapInfo) {
 
 		fmt.Printf("[i] PLAINTEXT LDAP connection to '%s' (%s) successful...\n[i] Upgrade to StartTLS connection...\n", li.LdapServer, li.LdapIP)
 
-		err = conn.StartTLS(&tls.Config{ServerName: li.LdapServer})
+		err = conn.StartTLS(&tls.Config{ServerName: li.LdapServer, InsecureSkipVerify: li.ForceInsecureTLS})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -58,7 +59,7 @@ func dial(li *LdapInfo) {
 	} else {
 
 		fmt.Printf("[i] Begin LDAP TLS connection to '%s' (%s)...\n", li.LdapServer, li.LdapIP)
-		config := &tls.Config{ServerName: li.LdapServer}
+		config := &tls.Config{ServerName: li.LdapServer, InsecureSkipVerify: li.ForceInsecureTLS}
 		conn, err := ldap.DialTLS("tcp", fmt.Sprintf("%s:%d", li.LdapServer, li.LdapTLSPort), config)
 		if err != nil {
 			log.Fatal(err)
