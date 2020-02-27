@@ -40,6 +40,9 @@ func main() {
 	if *mntpoint == "" {
 		*mntpoint = dir + "/goddi_mount"
 	}
+	if !strings.HasSuffix(*mntpoint, "/") {
+		*mntpoint = *mntpoint + "/"
+	}
 
 	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
 		flag.PrintDefaults()

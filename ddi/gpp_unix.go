@@ -100,7 +100,7 @@ func existMount(mntpoint string) {
 	// if /mnt/goddi does not exist, mkdir the directory
 	if _, err := os.Stat(mntpoint); os.IsNotExist(err) {
 		os.Mkdir(mntpoint, os.ModePerm)
-		fmt.Println("[i] /mnt/goddi mount point created...\n")
+		fmt.Printf("[i] %s mount point created...\n", mntpoint)
 	}
 }
 
@@ -108,7 +108,7 @@ func existMount(mntpoint string) {
 func checkMount(mntpoint string) {
 
 	if len(getSubDirs(mntpoint)) != 0 {
-		fmt.Printf("[i] /mnt/goddi mounted, unmounting now...\n")
+		fmt.Printf("[i] %s mounted, unmounting now...\n", mntpoint)
 		_, err := removeUnix(mntpoint)
 		if err != nil {
 			log.Fatal(err)
