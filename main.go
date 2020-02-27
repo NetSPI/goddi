@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/swarley7/goddi/ddi"
+	goddi "github.com/swarley7/goddi/ddi"
 )
 
 func main() {
@@ -29,6 +29,7 @@ func main() {
 	startTLS := flag.Bool("startTLS", false, "Use for StartTLS on 389. Default is TLS on 636")
 	unsafe := flag.Bool("unsafe", false, "Use for testing and plaintext connection")
 	forceInsecureTLS := flag.Bool("insecure", false, "Ignore TLS errors (e.g. Self-Signed certificate)")
+	mntpoint := flag.String("mountpoint", "./goddi_mount", "Mount point to use for gpp_password")
 	flag.Parse()
 
 	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
@@ -54,6 +55,7 @@ func main() {
 		Unsafe:           *unsafe,
 		StartTLS:         *startTLS,
 		ForceInsecureTLS: *forceInsecureTLS,
+		MntPoint:         *mntpoint,
 	}
 
 	goddi.Connect(li)
@@ -81,7 +83,7 @@ func main() {
 	goddi.GetFSMORoles(li.Conn, baseDN)
 	goddi.GetSPNs(li.Conn, baseDN)
 	goddi.GetLAPS(li.Conn, baseDN)
-	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass)
+	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass, li.MntPoint)
 	stop := time.Since(start)
 
 	cwd := goddi.GetCWD()

@@ -15,7 +15,7 @@ import (
 // GetGPP grabs all GPP passwords
 // Reference: Scott Sutherland (@_nullbind), Chris Campbell (@obscuresec)
 // https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Get-GPPPassword.ps1
-func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string) {
+func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string, mntpoint string) {
 
 	fmt.Printf("[i] GPP enumeration starting. This can take a bit...\n")
 
@@ -43,7 +43,6 @@ func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string)
 
 	csv := [][]string{}
 	csv = append(csv, attributes)
-	mntpoint := "/mnt/goddi/"
 
 	existMount(mntpoint)
 	checkMount(mntpoint)

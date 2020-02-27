@@ -24,6 +24,7 @@ type LdapInfo struct {
 	Unsafe           bool
 	StartTLS         bool
 	ForceInsecureTLS bool
+	MntPoint         string
 }
 
 func dial(li *LdapInfo) {
