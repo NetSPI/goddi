@@ -14,6 +14,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -29,8 +30,16 @@ func main() {
 	startTLS := flag.Bool("startTLS", false, "Use for StartTLS on 389. Default is TLS on 636")
 	unsafe := flag.Bool("unsafe", false, "Use for testing and plaintext connection")
 	forceInsecureTLS := flag.Bool("insecure", false, "Ignore TLS errors (e.g. Self-Signed certificate)")
-	mntpoint := flag.String("mountpoint", "./goddi_mount", "Mount point to use for gpp_password")
+	mntpoint := flag.String("mountpoint", "", "Mount point to use for gpp_password")
 	flag.Parse()
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if *mntpoint == "" {
+		*mntpoint = dir + "/goddi_mount"
+	}
 
 	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
 		flag.PrintDefaults()
