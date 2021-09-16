@@ -1,3 +1,6 @@
+# ARCHIVE NOTE
+Project is no longer actively maintained.
+
 # goddi - Go dump domain info
 
 [![licence badge]][licence]
