@@ -11,9 +11,15 @@ Based on work from Scott Sutherland (@\_nullbind), Antti Rantasaari, Eric Gruber
 
 ## Install
 
-Use the executables in the releases section. If you want to build it yourself, make sure that your go environment is setup according to the <a href="https://golang.org/doc/code.html">Go setup doc</a>. The goddi package also uses the below package.
+`go install github.com/swarley7/goddi`
 
-    go get gopkg.in/ldap.v2
+Or, 
+
+```
+git clone https://github.com/swarley7/goddi.git
+cd goddi
+go install
+```    
 
 ### Windows
 
