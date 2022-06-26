@@ -14,10 +14,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/NetSPI/goddi/ddi"
+	goddi "github.com/swarley7/goddi/ddi"
 )
 
 func main() {
@@ -28,7 +29,20 @@ func main() {
 	pass := flag.String("password", "", "password to connect with ex. -password=\"testpass!\"")
 	startTLS := flag.Bool("startTLS", false, "Use for StartTLS on 389. Default is TLS on 636")
 	unsafe := flag.Bool("unsafe", false, "Use for testing and plaintext connection")
+	forceInsecureTLS := flag.Bool("insecure", false, "Ignore TLS errors (e.g. Self-Signed certificate)")
+	mntpoint := flag.String("mountpoint", "", "Mount point to use for gpp_password")
 	flag.Parse()
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if *mntpoint == "" {
+		*mntpoint = dir + "/goddi_mount"
+	}
+	if !strings.HasSuffix(*mntpoint, "/") {
+		*mntpoint = *mntpoint + "/"
+	}
 
 	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
 		flag.PrintDefaults()
@@ -42,16 +56,19 @@ func main() {
 	username := *user + "@" + *domain
 
 	li := &goddi.LdapInfo{
-		LdapServer:  *ldapServer,
-		LdapIP:      ldapIP,
-		LdapPort:    uint16(389),
-		LdapTLSPort: uint16(636),
-		User:        username,
-		Usergpp:     *user,
-		Pass:        *pass,
-		Domain:      *domain,
-		Unsafe:      *unsafe,
-		StartTLS:    *startTLS}
+		LdapServer:       *ldapServer,
+		LdapIP:           ldapIP,
+		LdapPort:         uint16(389),
+		LdapTLSPort:      uint16(636),
+		User:             username,
+		Usergpp:          *user,
+		Pass:             *pass,
+		Domain:           *domain,
+		Unsafe:           *unsafe,
+		StartTLS:         *startTLS,
+		ForceInsecureTLS: *forceInsecureTLS,
+		MntPoint:         *mntpoint,
+	}
 
 	goddi.Connect(li)
 	defer li.Conn.Close()
@@ -78,7 +95,7 @@ func main() {
 	goddi.GetFSMORoles(li.Conn, baseDN)
 	goddi.GetSPNs(li.Conn, baseDN)
 	goddi.GetLAPS(li.Conn, baseDN)
-	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass)
+	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass, li.MntPoint)
 	stop := time.Since(start)
 
 	cwd := goddi.GetCWD()
