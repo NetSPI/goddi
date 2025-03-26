@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package goddi
@@ -14,7 +15,7 @@ import (
 // GetGPP grabs all GPP passwords
 // Reference: Scott Sutherland (@_nullbind), Chris Campbell (@obscuresec)
 // https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Get-GPPPassword.ps1
-func GetGPP(conn *ldap.Conn, domain string, dc string, user string, pass string) {
+func GetGPP(conn *ldap.Conn, domain string, dc string, user string, pass string, _ string) { //Mountpoint not needed here cos windows, lol
 
 	fmt.Printf("[i] GPP enumeration starting. This can take a bit...\n")
 

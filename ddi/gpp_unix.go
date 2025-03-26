@@ -15,7 +15,7 @@ import (
 // GetGPP grabs all GPP passwords
 // Reference: Scott Sutherland (@_nullbind), Chris Campbell (@obscuresec)
 // https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Get-GPPPassword.ps1
-func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string) {
+func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string, mntpoint string) {
 
 	fmt.Printf("[i] GPP enumeration starting. This can take a bit...\n")
 
@@ -43,7 +43,6 @@ func GetGPP(conn *ldap.Conn, baseDN string, dc string, user string, pass string)
 
 	csv := [][]string{}
 	csv = append(csv, attributes)
-	mntpoint := "/mnt/goddi/"
 
 	existMount(mntpoint)
 	checkMount(mntpoint)
@@ -101,7 +100,7 @@ func existMount(mntpoint string) {
 	// if /mnt/goddi does not exist, mkdir the directory
 	if _, err := os.Stat(mntpoint); os.IsNotExist(err) {
 		os.Mkdir(mntpoint, os.ModePerm)
-		fmt.Println("[i] /mnt/goddi mount point created...\n")
+		fmt.Printf("[i] %s mount point created...\n", mntpoint)
 	}
 }
 
@@ -109,7 +108,7 @@ func existMount(mntpoint string) {
 func checkMount(mntpoint string) {
 
 	if len(getSubDirs(mntpoint)) != 0 {
-		fmt.Printf("[i] /mnt/goddi mounted, unmounting now...\n")
+		fmt.Printf("[i] %s mounted, unmounting now...\n", mntpoint)
 		_, err := removeUnix(mntpoint)
 		if err != nil {
 			log.Fatal(err)

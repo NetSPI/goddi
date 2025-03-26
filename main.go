@@ -14,44 +14,80 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/NetSPI/goddi/ddi"
+	goddi "github.com/swarley7/goddi/ddi"
 )
 
 func main() {
+	ldapServer := flag.String("dc", "", "Hostname of DC to connect to. ex. -dc=\"dc.test.local\"")
+	ldapIP := flag.String("dc-ip", "", "Optional: IP address of DC to connect to (useful if proxying without DNS magic)")
+	domain := flag.String("domain", "", "Domain, ex. -domain=\"test.local\"")
+	user := flag.String("username", "", "Username to connect with, ex. -username=\"testuser@example.org\"")
+	pass := flag.String("password", "", "Password to connect with, ex. -password=\"testpass!\"")
+	startTLS := flag.Bool("startTLS", false, "Use StartTLS on 389. Default is TLS on 636")
+	unsafe := flag.Bool("unsafe", false, "Use for testing with plaintext connection")
+	forceInsecureTLS := flag.Bool("insecure", false, "Ignore TLS errors (e.g., self-signed certificates)")
+	mntpoint := flag.String("mountpoint", "", "Mount point to use for gpp_password")
+	basednArg := flag.String("basedn", "", "Base DN to use. If set, this overrides the domain-based calculation.")
 
-	ldapServer := flag.String("dc", "", "DC to connect to, use IP or full hostname ex. -dc=\"dc.test.local\"")
-	domain := flag.String("domain", "", "domain ex. -domain=\"test.local\"")
-	user := flag.String("username", "", "username to connect with ex. -username=\"testuser\"")
-	pass := flag.String("password", "", "password to connect with ex. -password=\"testpass!\"")
-	startTLS := flag.Bool("startTLS", false, "Use for StartTLS on 389. Default is TLS on 636")
-	unsafe := flag.Bool("unsafe", false, "Use for testing and plaintext connection")
 	flag.Parse()
 
-	if len(*ldapServer) == 0 || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if *mntpoint == "" {
+		*mntpoint = dir + "/goddi_mount"
+	}
+	if !strings.HasSuffix(*mntpoint, "/") {
+		*mntpoint = *mntpoint + "/"
+	}
+
+	if (len(*ldapServer) == 0 && len(*ldapIP) == 0) || len(*domain) == 0 || len(*user) == 0 || len(*pass) == 0 {
 		flag.PrintDefaults()
 		log.Fatal("[ERROR] Provide username, password, DC, and domain!\n")
 	}
+	if *ldapIP == "" {
+		*ldapServer, *ldapIP = goddi.ValidateIPHostname(*ldapServer, *domain)
+	} else {
+		ldapServer = ldapIP
+	}
 
-	var ldapIP string
-	*ldapServer, ldapIP = goddi.ValidateIPHostname(*ldapServer, *domain)
+	// If -basedn is set, we will use that. Otherwise, we require domain and derive baseDN.
+	var baseDN string
+	if *basednArg != "" {
+		baseDN = *basednArg
+	} else {
+		if len(*domain) == 0 {
+			flag.PrintDefaults()
+			log.Fatal("[ERROR] Provide either a valid domain (-domain) or a custom baseDN (-basedn)!\n")
+		}
+		baseDN = "dc=" + strings.Replace(*domain, ".", ",dc=", -1)
+	}
 
-	baseDN := "dc=" + strings.Replace(*domain, ".", ",dc=", -1)
-	username := *user + "@" + *domain
+	username := *user
 
 	li := &goddi.LdapInfo{
-		LdapServer:  *ldapServer,
-		LdapIP:      ldapIP,
-		LdapPort:    uint16(389),
-		LdapTLSPort: uint16(636),
-		User:        username,
-		Usergpp:     *user,
-		Pass:        *pass,
-		Domain:      *domain,
-		Unsafe:      *unsafe,
-		StartTLS:    *startTLS}
+		LdapServer:       *ldapServer,
+		LdapIP:           *ldapIP,
+		LdapPort:         uint16(389),
+		LdapTLSPort:      uint16(636),
+		User:             username,
+		Usergpp:          *user,
+		Pass:             *pass,
+		Domain:           *domain,
+		Unsafe:           *unsafe,
+		StartTLS:         *startTLS,
+		ForceInsecureTLS: *forceInsecureTLS,
+		MntPoint:         *mntpoint,
+	}
+	//fmt.Printf("[i] basedn: %s\n", baseDN)
+	//fmt.Printf("[i] user: %s\n", username)
+
 
 	goddi.Connect(li)
 	defer li.Conn.Close()
@@ -78,7 +114,7 @@ func main() {
 	goddi.GetFSMORoles(li.Conn, baseDN)
 	goddi.GetSPNs(li.Conn, baseDN)
 	goddi.GetLAPS(li.Conn, baseDN)
-	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass)
+	goddi.GetGPP(li.Conn, li.Domain, li.LdapServer, li.Usergpp, li.Pass, li.MntPoint)
 	stop := time.Since(start)
 
 	cwd := goddi.GetCWD()
